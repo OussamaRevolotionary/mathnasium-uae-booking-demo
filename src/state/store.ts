@@ -237,6 +237,8 @@ export const centerName = (id: string, lang: Lang) => {
   const c = CENTERS.find((x) => x.id === id);
   return c ? (lang === 'ar' ? c.nameAr : c.name) : id;
 };
+/** "Mathnasium Motor City" / "ماثنيزيوم موتور سيتي" */
+export const centerFull = (id: string, lang: Lang) => `${lang === 'ar' ? 'ماثنيزيوم' : 'Mathnasium'} ${centerName(id, lang)}`;
 export const whenLabel = (date: string, startMin: number, durationMin: number, lang: Lang) =>
   `${formatDate(date, lang, { weekday: 'long', day: 'numeric', month: 'long' })} · ${fmtTime(startMin)}–${fmtTime(startMin + durationMin)}`;
 
@@ -470,7 +472,7 @@ export function resetDemo() {
   const s = getState();
   seedCache = null;
   state = initialState({ sync: s.sync, lang: s.ui.lang, accountId: s.accountId, pitchHidden: s.ui.pitchHidden });
-  state = { ...state, ui: { ...state.ui, childId: s.ui.childId, staffCenter: s.ui.staffCenter, staffTab: s.ui.staffTab } };
+  state = { ...state, ui: { ...state.ui, childId: s.ui.childId, staffCenter: s.ui.staffCenter, staffTab: s.ui.staffTab, pitchOpen: s.ui.pitchOpen } };
   persist();
   listeners.forEach((l) => l());
   toast(tr('toast.reset'), 'info');

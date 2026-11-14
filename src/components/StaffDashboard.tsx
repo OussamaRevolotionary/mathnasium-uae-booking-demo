@@ -39,7 +39,7 @@ import {
   toYearMonth,
 } from '../engine/calendar.ts';
 import { checkBooking, getMonthlyUsage, occupancyStatus, type BookingIndex } from '../engine/bookingEngine.ts';
-import { bookLesson, centerName, childName, parentName, ui, useAppState, useIndex, useT } from '../state/store.ts';
+import { bookLesson, childName, parentName, ui, useAppState, useIndex, useT, centerFull } from '../state/store.ts';
 import { topicLabel } from '../i18n/translations.ts';
 import { Roster, SyncBadge, nextOpenDay } from './StaffPages.tsx';
 import { Avatar, Drawer, SeatPods, TierBadge, btn, cx } from './ui.tsx';
@@ -115,7 +115,7 @@ export function StaffDashboard() {
             <span className={cx('size-2 rounded-full', openNow ? 'live-dot bg-emerald-500' : 'bg-slate-300')} />
             {openNow ? L('Open now', 'مفتوح الآن') : L('Closed now', 'مغلق الآن')} · <span dir="ltr">{fmtTime(now.minutes)} GST</span>
           </div>
-          <h1 className="text-2xl font-bold text-ink">Mathnasium {centerName(center, t.lang)}</h1>
+          <h1 className="text-2xl font-bold text-ink">{centerFull(center, t.lang)}</h1>
           <p className="text-sm text-slate-500">
             {isToday ? L('Today', 'اليوم') : L('Next open day', 'يوم العمل القادم')} · {formatDate(today, t.lang, { weekday: 'long', day: 'numeric', month: 'long' })} ·{' '}
             <span dir="ltr">

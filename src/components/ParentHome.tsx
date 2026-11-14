@@ -17,25 +17,7 @@ import {
 } from '../engine/calendar.ts';
 import { canParentCancel, checkBooking, getMonthlyUsage, occupancyStatus, type LessonRequest } from '../engine/bookingEngine.ts';
 import { CAPACITY } from '../engine/calendar.ts';
-import {
-  bookLesson,
-  cancelLesson,
-  centerName,
-  childName,
-  currentAccount,
-  googleCalendarLink,
-  joinWaitlist,
-  parentName,
-  requestUpgrade,
-  rescheduleLesson,
-  startReschedule,
-  stopReschedule,
-  ui,
-  useAppState,
-  useIndex,
-  useT,
-  whenLabel,
-} from '../state/store.ts';
+import { bookLesson, cancelLesson, childName, currentAccount, googleCalendarLink, joinWaitlist, parentName, requestUpgrade, rescheduleLesson, startReschedule, stopReschedule, ui, useAppState, useIndex, useT, whenLabel, centerFull } from '../state/store.ts';
 import { topicLabel } from '../i18n/translations.ts';
 import { Avatar, Modal, Ring, SeatPods, StarBurst, Stars, Toggle, btn, cx } from './ui.tsx';
 
@@ -43,7 +25,7 @@ const DURATIONS: LessonDuration[] = [30, 60, 90, 120];
 
 type Dialog =
   | { kind: 'confirm'; req: LessonRequest }
-  | { kind: 'done'; booking: Booking }
+  | { kind: 'done'; booking: Booking; moved?: boolean }
   | { kind: 'move'; req: LessonRequest }
   | { kind: 'cancel'; booking: Booking }
   | null;
@@ -448,7 +430,7 @@ function Dialogs({ dialog, setDialog, child, moving }: { dialog: Dialog; setDial
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <MapPin className="size-4 text-brand" /> Mathnasium {centerName(child.centerId, t.lang)}
+          <MapPin className="size-4 text-brand" /> {centerFull(child.centerId, t.lang)}
         </div>
       </div>
     </div>
@@ -494,7 +476,7 @@ function Dialogs({ dialog, setDialog, child, moving }: { dialog: Dialog; setDial
           <div className="anim-check mx-auto grid size-16 place-items-center rounded-full bg-emerald-500 text-white">
             <Check className="size-8" strokeWidth={3} />
           </div>
-          <h3 className="mt-4 text-xl font-bold text-ink">{t('done.title')}</h3>
+          <h3 className="mt-4 text-xl font-bold text-ink">{dialog.moved ? (t.lang === 'ar' ? 'تم نقل الحصة!' : 'Lesson moved!') : t('done.title')}</h3>
           <p className="mt-1 text-sm text-slate-500">
             {childName(child, t.lang)} · {whenLabel(b.date, b.startMin, b.durationMin, t.lang)}
           </p>
@@ -532,7 +514,7 @@ function Dialogs({ dialog, setDialog, child, moving }: { dialog: Dialog; setDial
           <button
             onClick={() => {
               const r = rescheduleLesson(moving.id, dialog.req);
-              setDialog(r.ok ? { kind: 'done', booking: r.booking } : null);
+              setDialog(r.ok ? { kind: 'done', booking: r.booking, moved: true } : null);
             }}
             className={cx(btn.primary, 'flex-[2]')}
           >

@@ -6,22 +6,7 @@ import { addDays, dubaiNow, fmtTime, formatDate, formatMonth, hoursOf, isOpenDay
 import { endMin, getMonthlyUsage, occupancyStatus } from '../engine/bookingEngine.ts';
 import { isValidWebhookUrl } from '../services/n8nSyncService.ts';
 import { TOPICS, topicLabel } from '../i18n/translations.ts';
-import {
-  cancelLesson,
-  centerName,
-  childName,
-  clearSyncLog,
-  createFamily,
-  parentName,
-  sendTestEvent,
-  setSync,
-  setTier,
-  ui,
-  useAppState,
-  useIndex,
-  useT,
-  type NewFamily,
-} from '../state/store.ts';
+import { cancelLesson, childName, clearSyncLog, createFamily, parentName, sendTestEvent, setSync, setTier, ui, useAppState, useIndex, useT, type NewFamily, centerFull } from '../state/store.ts';
 import { Avatar, Drawer, SeatPods, TierBadge, btn, cx } from './ui.tsx';
 
 // ───────────────────────── Calendar ─────────────────────────
@@ -67,7 +52,7 @@ export function StaffCalendar() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
       <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-bold text-ink">Mathnasium {centerName(center, t.lang)}</h1>
+        <h1 className="text-2xl font-bold text-ink">{centerFull(center, t.lang)}</h1>
         <SyncBadge />
         <div className="ms-auto flex flex-wrap items-center gap-2">
           <div className="inline-flex rounded-xl bg-slate-100 p-1 text-sm">
@@ -455,7 +440,7 @@ function NewFamilyDrawer({ onClose }: { onClose: () => void }) {
           <select className={field} value={f.centerId} onChange={(e) => setF({ ...f, centerId: e.target.value })}>
             {CENTERS.map((c) => (
               <option key={c.id} value={c.id}>
-                Mathnasium {t.lang === 'ar' ? c.nameAr : c.name}
+                {centerFull(c.id, t.lang)}
               </option>
             ))}
           </select>

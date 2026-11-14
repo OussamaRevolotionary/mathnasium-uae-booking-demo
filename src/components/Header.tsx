@@ -1,6 +1,6 @@
 import { CalendarDays, LayoutDashboard, LogOut, MapPin, Settings, Users } from 'lucide-react';
 import { CENTERS } from '../data/seedData.ts';
-import { centerName, currentAccount, logout, ui, useAppState, useT, type StaffTab } from '../state/store.ts';
+import { currentAccount, logout, ui, useAppState, useT, type StaffTab, centerFull } from '../state/store.ts';
 import { Logo, cx } from './ui.tsx';
 
 export function LangToggle() {
@@ -45,7 +45,7 @@ export function Header() {
               <select value={s.ui.staffCenter} onChange={(e) => ui.setStaffCenter(e.target.value)} className="cursor-pointer bg-transparent font-medium text-slate-600 outline-none">
                 {CENTERS.map((c) => (
                   <option key={c.id} value={c.id}>
-                    Mathnasium {t.lang === 'ar' ? c.nameAr : c.name}
+                    {centerFull(c.id, t.lang)}
                   </option>
                 ))}
               </select>
@@ -53,7 +53,7 @@ export function Header() {
           ) : (
             kidsCenter && (
               <div className="flex items-center gap-1 text-xs text-slate-500">
-                <MapPin className="size-3 text-brand" /> Mathnasium {centerName(kidsCenter, t.lang)}
+                <MapPin className="size-3 text-brand" /> {centerFull(kidsCenter, t.lang)}
               </div>
             )
           )}
