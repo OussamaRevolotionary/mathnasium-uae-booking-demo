@@ -1,0 +1,8 @@
+node_modules
+dist
+*.tsbuildinfo
+
+API_Key.env
+.env
+.env.*
+*.env
