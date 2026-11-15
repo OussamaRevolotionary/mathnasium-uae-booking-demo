@@ -45,6 +45,18 @@ Staff → **Settings**: paste an n8n Webhook URL and choose **Live**. Each booki
 Allowed Origins) → Switch on `googleCalendarAction.action` → Google Calendar node; WhatsApp node for `whatsappNotification`.
 Without a URL the app stays in test mode and nothing is sent. Parents also get an "Add to Google Calendar" link after booking.
 
+## Live demo and publishing
+Public link: https://oussamarevolotionary.github.io/mathnasium-uae-booking-demo/
+
+`npm run deploy` builds the site and publishes it to the `gh-pages` branch (GitHub Pages).
+
+## Assistant with a real AI model
+The **Ask us** assistant can answer with Google Gemini or an NVIDIA model. The API key never goes into the website:
+- **On your computer:** copy `env.example` to `.env.local`, add one key, restart `npm run dev`. The dev server answers at `/api/assistant`.
+- **On the public link:** deploy `server/worker.js` to Cloudflare Workers (instructions at the top of that file), then build with `VITE_ASSISTANT_URL=<worker url>`.
+- With no key or no worker, the assistant uses its built-in answers.
+The model is told the portal's rules, Mathnasium's published FAQ and the family's lesson counts, and is instructed never to quote prices or solve homework (`server/assistantCore.mjs`).
+
 ## Explainer videos (English + Arabic)
 Made with [OpenFilm](https://openfilm.dev): each film is a web page (`video/mathnasium-en/film.html`, `video/mathnasium-ar/film.html`).
 - `video/tools/capture.mjs en|ar` photographs the real demo (dev server must be running) and records where each element sits.

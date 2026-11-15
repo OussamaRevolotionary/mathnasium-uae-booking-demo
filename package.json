@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "deploy": "bash scripts/deploy-pages.sh",
     "audit:engine": "node --experimental-strip-types scripts/auditEngine.ts"
   },
   "dependencies": {

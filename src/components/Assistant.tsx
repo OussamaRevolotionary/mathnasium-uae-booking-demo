@@ -303,6 +303,37 @@ const INTENTS: Intent[] = [
 
 const byId = (id: string) => INTENTS.find((i) => i.id === id)!;
 
+/**
+ * Where the real AI model is reached. Locally the dev server answers at /api/assistant (key in .env.local);
+ * for a hosted site set VITE_ASSISTANT_URL to the Cloudflare Worker. With neither, the built-in answers are used.
+ */
+const AI_URL: string = import.meta.env.VITE_ASSISTANT_URL ?? (import.meta.env.DEV ? '/api/assistant' : '');
+
+/** What the model is told about this family (demo data). */
+function familyContext(c: Ctx): string {
+  const now = dubaiNow();
+  const en: Ctx = { ...c, lang: 'en' };
+  return [
+    `Today in Dubai: ${formatDate(now.date, 'en', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}, ${fmtTime(now.minutes)}.`,
+    `Center: Mathnasium ${c.center}.`,
+    'Lessons this month:',
+    balanceLines(en),
+    'Next lesson per child:',
+    byId('next').answer(en).text,
+  ].join('\n');
+}
+
+async function askAi(lang: Lang, context: string, messages: { role: 'user' | 'assistant'; text: string }[]): Promise<string | null> {
+  if (!AI_URL) return null;
+  try {
+    const r = await fetch(AI_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, context, messages }), signal: AbortSignal.timeout(22000) });
+    const j = await r.json();
+    return j.ok && j.text ? (j.text as string) : null;
+  } catch {
+    return null;
+  }
+}
+
 function reply(text: string, c: Ctx): Reply {
   const q = ` ${norm(text)} `;
   if (/\b(hi|hello|hey|thanks|thank you)\b/.test(q) || /(مرحبا|السلام|اهلا|شكرا)/.test(q)) {
@@ -332,6 +363,7 @@ interface Msg {
   chips?: string[];
   action?: Reply['action'];
   done?: boolean;
+  ai?: boolean;
 }
 
 export function Assistant() {
@@ -343,6 +375,7 @@ export function Assistant() {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [typing, setTyping] = useState(false);
   const [input, setInput] = useState('');
+  const [ai, setAi] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
   const seq = useRef(0);
 
@@ -353,6 +386,15 @@ export function Assistant() {
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: 'end' });
   }, [msgs, typing, open]);
+
+  // Is a real AI model connected? (asked once the chat is opened)
+  useEffect(() => {
+    if (!open || !AI_URL) return;
+    fetch(AI_URL)
+      .then((r) => r.json())
+      .then((j) => setAi(!!j.ok))
+      .catch(() => setAi(false));
+  }, [open]);
 
   // Fresh greeting whenever the language changes.
   useEffect(() => {
@@ -375,11 +417,16 @@ export function Assistant() {
     setMsgs((m) => [...m, { id: ++seq.current, from: 'me', text: text.trim() }]);
     setInput('');
     setTyping(true);
-    setTimeout(() => {
-      const r = reply(text, ctx);
-      setMsgs((m) => [...m, { id: ++seq.current, from: 'bot', ...r }]);
-      setTyping(false);
-    }, 550);
+    const builtIn = reply(text, ctx); // always ready: instant answer, quick replies and actions
+    const history = [...msgs.filter((m) => m.id > 1).map((m) => ({ role: m.from === 'me' ? ('user' as const) : ('assistant' as const), text: m.text })), { role: 'user' as const, text: text.trim() }];
+    const started = Date.now();
+    void (ai ? askAi(t.lang, familyContext(ctx), history) : Promise.resolve(null)).then((aiText) => {
+      const show = () => {
+        setMsgs((m) => [...m, { id: ++seq.current, from: 'bot', ...builtIn, text: aiText ?? builtIn.text, ai: !!aiText }]);
+        setTyping(false);
+      };
+      setTimeout(show, Math.max(0, 550 - (Date.now() - started)));
+    });
   };
 
   return (
@@ -399,7 +446,7 @@ export function Assistant() {
             <div className="min-w-0 flex-1">
               <div className="text-sm font-semibold">{ar ? 'مساعد ماثنيزيوم' : 'Mathnasium Assistant'}</div>
               <div className="flex items-center gap-1.5 text-[11px] text-white/60">
-                <span className="live-dot size-1.5 rounded-full bg-emerald-400" /> {ar ? 'ردّ آلي فوري · العضوية والحجز' : 'Instant automated answers · membership & booking'}
+                <span className="live-dot size-1.5 rounded-full bg-emerald-400" /> {ai ? (ar ? 'مساعد ذكي · العضوية والحجز' : 'AI assistant · membership & booking') : ar ? 'ردّ آلي فوري · العضوية والحجز' : 'Instant automated answers · membership & booking'}
               </div>
             </div>
             <button onClick={() => setOpen(false)} className="rounded-full p-1.5 text-white/60 hover:bg-white/10 hover:text-white" aria-label={t('common.close')}>
