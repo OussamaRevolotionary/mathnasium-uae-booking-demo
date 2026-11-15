@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { Infinity as InfinityIcon, Star, X } from 'lucide-react';
 import type { MembershipTier, OccupancyStatus, Student } from '../types/domain.ts';
 import { CAPACITY } from '../engine/calendar.ts';
@@ -144,7 +145,8 @@ function useEscape(onClose: () => void) {
 
 export function Modal({ onClose, children, width = 'max-w-md' }: { onClose: () => void; children: ReactNode; width?: string }) {
   useEscape(onClose);
-  return (
+  // Drawn at the top of the page (portal) so nothing on the page can cover it.
+  return createPortal(
     <div className="fixed inset-0 z-[60] grid place-items-end p-0 sm:place-items-center sm:p-4">
       <div className="absolute inset-0 bg-ink-900/40 backdrop-blur-[2px]" onClick={onClose} />
       <div className={cx('anim-pop relative max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl', width)}>
@@ -153,13 +155,14 @@ export function Modal({ onClose, children, width = 'max-w-md' }: { onClose: () =
         </button>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
 export function Drawer({ onClose, title, children }: { onClose: () => void; title: ReactNode; children: ReactNode }) {
   useEscape(onClose);
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50">
       <div className="absolute inset-0 bg-ink-900/30" onClick={onClose} />
       <aside className="anim-drawer absolute inset-y-0 end-0 flex w-full max-w-lg flex-col bg-white shadow-2xl">
@@ -171,7 +174,8 @@ export function Drawer({ onClose, title, children }: { onClose: () => void; titl
         </header>
         <div className="thin-scroll flex-1 overflow-y-auto px-5 py-4">{children}</div>
       </aside>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

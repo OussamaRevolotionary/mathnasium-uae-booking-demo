@@ -139,7 +139,7 @@ export function MathField({ tone, fixed, density = 1 }: { tone: 'dark' | 'light'
 /** The charcoal "chalkboard" band at the top of a screen. */
 export function Hero({ children }: { children: React.ReactNode }) {
   return (
-    <section className="hero relative z-10">
+    <section className="hero relative z-20">
       <div className="absolute inset-0 overflow-hidden">
         <div className="hero-grid absolute inset-0" />
         <div className="hero-glow absolute inset-0" />
