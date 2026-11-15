@@ -8,6 +8,7 @@ import { StaffDashboard } from './components/StaffDashboard.tsx';
 import { Assistant } from './components/Assistant.tsx';
 import { PitchBar } from './components/PitchBar.tsx';
 import { Toasts } from './components/Toasts.tsx';
+import { MathField } from './components/MathField.tsx';
 
 export default function App() {
   const s = useAppState();
@@ -22,10 +23,11 @@ export default function App() {
 
   return (
     <>
+      <MathField tone="light" fixed density={0.7} />
       {!acc ? (
         <Login />
       ) : (
-        <div className="min-h-screen pb-20">
+        <div className="relative z-10 min-h-screen pb-20">
           <Header />
           <main key={`${acc.id}-${s.ui.staffTab}`}>
             {acc.role === 'PARENT' ? <ParentHome /> : s.ui.staffTab === 'FAMILIES' ? <StaffFamilies /> : s.ui.staffTab === 'SETTINGS' ? <StaffSettings /> : s.ui.staffTab === 'CALENDAR' ? <StaffCalendar /> : <StaffDashboard />}

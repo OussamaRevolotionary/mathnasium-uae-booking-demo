@@ -19,6 +19,7 @@ import { canParentCancel, checkBooking, getMonthlyUsage, occupancyStatus, type L
 import { CAPACITY } from '../engine/calendar.ts';
 import { bookLesson, cancelLesson, childName, currentAccount, googleCalendarLink, joinWaitlist, parentName, requestUpgrade, rescheduleLesson, startReschedule, stopReschedule, ui, useAppState, useIndex, useT, whenLabel, centerFull } from '../state/store.ts';
 import { topicLabel } from '../i18n/translations.ts';
+import { Hero, Scribble } from './MathField.tsx';
 import { Avatar, Modal, Ring, SeatPods, StarBurst, Stars, Toggle, btn, cx } from './ui.tsx';
 
 const DURATIONS: LessonDuration[] = [30, 60, 90, 120];
@@ -75,13 +76,16 @@ export function ParentHome() {
     .sort((a, b) => (a.date + fmtTime(a.startMin)).localeCompare(b.date + fmtTime(b.startMin)));
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6">
+    <div>
       {/* Greeting + children */}
+      <Hero>
       <div className="anim-fade-up">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-ink">{t('parent.hello', { name: parentName(parent, t.lang).split(' ')[0] })}</h1>
-            <p className="mt-1 text-sm text-slate-500">{t('parent.pickChild')}</p>
+            <h1 className="text-3xl font-bold text-white sm:text-4xl">
+              {t('parent.hello', { name: '' }).trim()} <Scribble>{parentName(parent, t.lang).split(' ')[0]}</Scribble>
+            </h1>
+            <p className="mt-3 text-sm text-white/60">{t('parent.pickChild')}</p>
           </div>
           <NextLesson kids={kids} />
         </div>
@@ -92,7 +96,10 @@ export function ParentHome() {
         </div>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      </Hero>
+
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-6">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="min-w-0 space-y-4">
           {moving ? (
             <div className="anim-fade-up flex items-start gap-3 rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-900">
@@ -261,6 +268,8 @@ export function ParentHome() {
         </aside>
       </div>
 
+      </div>
+
       <Dialogs dialog={dialog} setDialog={setDialog} child={child} moving={moving} />
     </div>
   );
@@ -286,8 +295,8 @@ function ChildCard({ k, ym, selected }: { k: Student; ym: string; selected: bool
     <button
       onClick={() => ui.setChild(k.id)}
       className={cx(
-        'flex min-w-[250px] flex-1 items-center gap-3 rounded-2xl border-2 bg-white p-3.5 text-start transition',
-        selected ? 'border-brand shadow-md shadow-brand/10' : 'border-transparent shadow-sm ring-1 ring-slate-200 hover:ring-slate-300',
+        'lift flex min-w-[250px] flex-1 items-center gap-3 rounded-2xl border-2 bg-white p-3.5 text-start',
+        selected ? 'border-brand shadow-xl shadow-brand/30' : 'border-transparent opacity-90 shadow-sm hover:opacity-100',
       )}
     >
       <Ring used={u.used} limit={u.limit} size={58} />
@@ -589,7 +598,7 @@ function NextLesson({ kids }: { kids: Student[] }) {
   const ar = t.lang === 'ar';
   const count = d > 0 ? (ar ? `${d} يوم ${h} س` : `${d}d ${h}h`) : h > 0 ? (ar ? `${h} س ${m} د` : `${h}h ${m}m`) : ar ? `${m} د` : `${m} min`;
   return (
-    <button onClick={() => (ui.setChild(next.k.id), ui.setDate(next.b.date))} className="flex items-center gap-3 rounded-2xl bg-ink px-4 py-2.5 text-start text-white shadow-lg transition hover:bg-ink-900">
+    <button onClick={() => (ui.setChild(next.k.id), ui.setDate(next.b.date))} className="float-y flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-2.5 text-start text-white ring-1 ring-white/15 backdrop-blur transition hover:bg-white/15">
       <span className="grid size-9 place-items-center rounded-xl bg-white/10">
         <Timer className="size-5 text-mastery" />
       </span>

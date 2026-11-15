@@ -45,6 +45,14 @@ Staff → **Settings**: paste an n8n Webhook URL and choose **Live**. Each booki
 Allowed Origins) → Switch on `googleCalendarAction.action` → Google Calendar node; WhatsApp node for `whatsappNotification`.
 Without a URL the app stays in test mode and nothing is sent. Parents also get an "Add to Google Calendar" link after booking.
 
+## Explainer videos (English + Arabic)
+Made with [OpenFilm](https://openfilm.dev): each film is a web page (`video/mathnasium-en/film.html`, `video/mathnasium-ar/film.html`).
+- `video/tools/capture.mjs en|ar` photographs the real demo (dev server must be running) and records where each element sits.
+- `video/tools/scenes.mjs` holds the script: narration and on-screen words for both languages.
+- `video/tools/tts.mjs` makes the narration with ElevenLabs (key in `video/tools/.env`, never committed).
+- `video/tools/build-film.mjs` assembles both projects; scene lengths follow the narration.
+- Render: in a film folder, `npx -y openfilm@latest render --loudness=-14` (needs ffmpeg on the PATH).
+
 ## Important — demo only
 Data lives in the browser (localStorage) and passwords are checked in the browser. A production version needs a
 server + database for accounts and bookings, and the n8n flow connected to the center's Google account.

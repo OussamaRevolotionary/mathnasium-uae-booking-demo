@@ -42,6 +42,7 @@ import { checkBooking, getMonthlyUsage, occupancyStatus, type BookingIndex } fro
 import { bookLesson, childName, parentName, ui, useAppState, useIndex, useT, centerFull } from '../state/store.ts';
 import { topicLabel } from '../i18n/translations.ts';
 import { Roster, SyncBadge, nextOpenDay } from './StaffPages.tsx';
+import { CountUp, Hero } from './MathField.tsx';
 import { Avatar, Drawer, SeatPods, TierBadge, btn, cx } from './ui.tsx';
 
 /** Seats used / available for a center on a date (seat-hours). */
@@ -107,16 +108,17 @@ export function StaffDashboard() {
   const results = q.trim().length >= 2 ? kids.filter((k) => `${k.firstName} ${k.lastName} ${k.firstNameAr} ${k.lastNameAr}`.toLowerCase().includes(q.trim().toLowerCase())).slice(0, 6) : [];
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6">
+    <div>
+      <Hero>
       {/* Top bar */}
       <div className="flex flex-wrap items-center gap-3">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase">
-            <span className={cx('size-2 rounded-full', openNow ? 'live-dot bg-emerald-500' : 'bg-slate-300')} />
+          <div className="flex items-center gap-2 text-xs font-semibold text-white/60 uppercase">
+            <span className={cx('size-2 rounded-full', openNow ? 'live-dot bg-emerald-400' : 'bg-white/30')} />
             {openNow ? L('Open now', 'مفتوح الآن') : L('Closed now', 'مغلق الآن')} · <span dir="ltr">{fmtTime(now.minutes)} GST</span>
           </div>
-          <h1 className="text-2xl font-bold text-ink">{centerFull(center, t.lang)}</h1>
-          <p className="text-sm text-slate-500">
+          <h1 className="text-3xl font-bold text-white sm:text-4xl">{centerFull(center, t.lang)}</h1>
+          <p className="mt-1 text-sm text-white/60">
             {isToday ? L('Today', 'اليوم') : L('Next open day', 'يوم العمل القادم')} · {formatDate(today, t.lang, { weekday: 'long', day: 'numeric', month: 'long' })} ·{' '}
             <span dir="ltr">
               {fmtTime(oh.open)}–{fmtTime(oh.close)}
@@ -173,7 +175,10 @@ export function StaffDashboard() {
         <Kpi tone="amber" icon={<MessageCircle className="size-4" />} label={L('Waiting for a seat', 'بانتظار مقعد')} value={waiting.length} sub={L('parents to notify', 'أولياء أمور للتنبيه')} />
       </div>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
+      </Hero>
+
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-6">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-5">
           {/* Today timeline */}
           <Card>
@@ -198,7 +203,7 @@ export function StaffDashboard() {
                     onClick={() => setRoster({ date: today, hour: h })}
                     className={cx(
                       'anim-fade-up relative rounded-2xl border p-3 text-start transition hover:-translate-y-0.5 hover:shadow-md',
-                      current ? 'border-ink ring-2 ring-ink/10' : 'border-slate-200',
+                      current ? 'now-sweep border-ink ring-2 ring-ink/10' : 'border-slate-200',
                       past && 'opacity-50',
                     )}
                     style={{ animationDelay: `${i * 50}ms` }}
@@ -387,6 +392,8 @@ export function StaffDashboard() {
         </div>
       </div>
 
+      </div>
+
       {roster && <Roster date={roster.date} hour={roster.hour} onClose={() => setRoster(null)} />}
       {booking && <StaffBookDrawer initial={booking === 'search' ? null : booking} onClose={() => setBooking(null)} />}
     </div>
@@ -403,13 +410,13 @@ const tones = {
 
 function Kpi({ icon, label, value, sub, tone, bar }: { icon: React.ReactNode; label: string; value: React.ReactNode; sub: string; tone: keyof typeof tones; bar?: number }) {
   return (
-    <div className="anim-fade-up rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="anim-fade-up lift rounded-3xl border border-white/10 bg-white p-4 shadow-xl shadow-black/20">
       <div className="flex items-center gap-2">
         <span className={cx('grid size-8 place-items-center rounded-xl', tones[tone])}>{icon}</span>
         <span className="text-xs leading-tight font-medium text-slate-500">{label}</span>
       </div>
       <div className="mt-3 text-3xl font-bold text-ink tabular-nums" dir="ltr">
-        {value}
+        <Counted value={value} />
       </div>
       {bar !== undefined && (
         <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
@@ -418,6 +425,18 @@ function Kpi({ icon, label, value, sub, tone, bar }: { icon: React.ReactNode; la
       )}
       <div className="mt-1.5 text-[11px] text-slate-400">{sub}</div>
     </div>
+  );
+}
+
+/** Counts up the leading number of a KPI value ("73%", "5/12", 46). */
+function Counted({ value }: { value: React.ReactNode }) {
+  const m = typeof value === 'number' ? [String(value), String(value), ''] : typeof value === 'string' ? value.match(/^(\d+)(.*)$/) : null;
+  if (!m) return <>{value}</>;
+  return (
+    <>
+      <CountUp value={Number(m[1])} />
+      {m[2]}
+    </>
   );
 }
 

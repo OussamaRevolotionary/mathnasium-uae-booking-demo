@@ -3,6 +3,7 @@ import { GraduationCap, LockKeyhole, User, Users } from 'lucide-react';
 import { DEMO_LOGINS } from '../data/seedData.ts';
 import { login, useT } from '../state/store.ts';
 import { LangToggle } from './Header.tsx';
+import { MathField, ProductEquations } from './MathField.tsx';
 import { Logo, btn, cx } from './ui.tsx';
 
 export function Login() {
@@ -17,8 +18,8 @@ export function Login() {
   };
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
-      <div className="flex flex-col px-6 py-6 sm:px-12">
+    <div className="relative z-10 grid min-h-screen lg:grid-cols-2">
+      <div className="flex flex-col bg-white/85 px-6 py-6 backdrop-blur-sm sm:px-12">
         <div className="flex items-center justify-between">
           <Logo className="h-10 sm:h-12" animate />
           <LangToggle />
@@ -72,13 +73,11 @@ export function Login() {
 
       <div className="relative hidden overflow-hidden bg-ink lg:block">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(244,41,65,0.35),transparent_45%),radial-gradient(circle_at_80%_80%,rgba(255,199,38,0.18),transparent_40%)]" />
+        <div className="hero-grid absolute inset-0" />
+        <MathField tone="dark" density={1.3} />
         <div className="relative flex h-full flex-col justify-end p-12 text-white">
-          <div className="mb-auto grid grid-cols-6 gap-3 opacity-15" aria-hidden>
-            {['+', '÷', '×', '−', '=', '%', '√', 'π', '∑', '½', '∞', 'x²'].map((g, i) => (
-              <span key={i} className="text-5xl font-bold">
-                {g}
-              </span>
-            ))}
+          <div className="mb-auto pt-6">
+            <ProductEquations lang={t.lang} />
           </div>
           <img src={`${import.meta.env.BASE_URL}brand/mathnasium-mark-light.png`} alt="" className="mb-6 h-12 w-auto self-start" />
           <div className="text-4xl leading-tight font-bold">{t('brand.tagline')}</div>

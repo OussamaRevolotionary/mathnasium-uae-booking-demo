@@ -6,3 +6,7 @@ API_Key.env
 .env
 .env.*
 *.env
+video/**/.film
+video/shots/*/*.png
+video/shots/*.jpg
+video/mathnasium-*/*.mp4

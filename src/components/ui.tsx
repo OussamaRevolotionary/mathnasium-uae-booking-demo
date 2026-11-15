@@ -82,7 +82,7 @@ export function SeatPods({ booked, status, size = 'md' }: { booked: number; stat
         <div key={pod} className="flex flex-1 gap-[3px] rounded-md bg-slate-100 p-[3px]">
           {[0, 1, 2, 3].map((i) => {
             const n = pod * 4 + i;
-            return <span key={i} className={cx('flex-1 rounded-sm transition-colors duration-500', size === 'sm' ? 'h-1.5' : 'h-2', n < booked ? fill[status] : 'bg-slate-300/70')} />;
+            return <span key={i} className={cx('flex-1 rounded-sm transition-colors duration-500', size === 'sm' ? 'h-1.5' : 'h-2', n < booked ? cx(fill[status], 'seat-pop') : 'bg-slate-300/70')} style={n < booked ? { animationDelay: `${n * 45}ms` } : undefined} />;
           })}
         </div>
       ))}
@@ -175,7 +175,7 @@ export function Drawer({ onClose, title, children }: { onClose: () => void; titl
 }
 
 export const btn = {
-  primary: 'inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-dark disabled:opacity-40',
+  primary: 'btn-shine inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-dark disabled:opacity-40',
   ghost: 'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100',
   outline: 'inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-ink transition hover:border-slate-300 hover:bg-slate-50',
 };
