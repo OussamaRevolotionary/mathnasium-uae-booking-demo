@@ -51,11 +51,14 @@ Public link: https://oussamarevolotionary.github.io/mathnasium-uae-booking-demo/
 `npm run deploy` builds the site and publishes it to the `gh-pages` branch (GitHub Pages).
 
 ## Assistant with a real AI model
-The **Ask us** assistant can answer with Google Gemini or an NVIDIA model. The API key never goes into the website:
-- **On your computer:** copy `env.example` to `.env.local`, add one key, restart `npm run dev`. The dev server answers at `/api/assistant`.
-- **On the public link:** deploy `server/worker.js` to Cloudflare Workers (instructions at the top of that file), then build with `VITE_ASSISTANT_URL=<worker url>`.
-- With no key or no worker, the assistant uses its built-in answers.
-The model is told the portal's rules, Mathnasium's published FAQ and the family's lesson counts, and is instructed never to quote prices or solve homework (`server/assistantCore.mjs`).
+The **Ask us** assistant answers with Google Gemini through an n8n workflow ("Mathnasium · Parent Assistant (Gemini)").
+The website sends the question, the conversation and the family's lesson counts to the workflow's webhook; n8n holds the
+Gemini key, adds the fixed facts (portal rules + Mathnasium's published FAQ) and returns the answer. The key never reaches the browser.
+- The model is instructed to answer only from those facts, never quote prices, not solve homework, and reply in the parent's language.
+- If the workflow is slow or unreachable, the assistant shows its built-in answer instead, so the chat never breaks.
+- Change the address with `VITE_ASSISTANT_URL`, or set it to `off` for built-in answers only.
+- The webhook only accepts browser calls from the GitHub Pages site and localhost (CORS allow-list on the Webhook node).
+- `server/` holds an alternative without n8n: a local dev endpoint (`/api/assistant`, key in `.env.local`) and a Cloudflare Worker.
 
 ## Explainer videos (English + Arabic)
 Made with [OpenFilm](https://openfilm.dev): each film is a web page (`video/mathnasium-en/film.html`, `video/mathnasium-ar/film.html`).

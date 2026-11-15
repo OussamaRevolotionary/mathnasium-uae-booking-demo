@@ -304,10 +304,13 @@ const INTENTS: Intent[] = [
 const byId = (id: string) => INTENTS.find((i) => i.id === id)!;
 
 /**
- * Where the real AI model is reached. Locally the dev server answers at /api/assistant (key in .env.local);
- * for a hosted site set VITE_ASSISTANT_URL to the Cloudflare Worker. With neither, the built-in answers are used.
+ * Where the real AI model is reached: an n8n workflow that holds the Gemini key and answers from fixed facts.
+ * (This address is not a secret — the key never leaves n8n.) Override with VITE_ASSISTANT_URL, or set it to
+ * "off" to use only the built-in answers. If the call fails or is slow, the built-in answer is shown instead.
  */
-const AI_URL: string = import.meta.env.VITE_ASSISTANT_URL ?? (import.meta.env.DEV ? '/api/assistant' : '');
+const N8N_ASSISTANT = 'https://oussama19.app.n8n.cloud/webhook/mathnasium-assistant';
+const configuredUrl: string = import.meta.env.VITE_ASSISTANT_URL ?? N8N_ASSISTANT;
+const AI_URL: string = configuredUrl === 'off' ? '' : configuredUrl;
 
 /** What the model is told about this family (demo data). */
 function familyContext(c: Ctx): string {
@@ -390,6 +393,7 @@ export function Assistant() {
   // Is a real AI model connected? (asked once the chat is opened)
   useEffect(() => {
     if (!open || !AI_URL) return;
+    if (/^https?:/.test(AI_URL)) return setAi(true); // hosted endpoint: assume on; each answer falls back if it fails
     fetch(AI_URL)
       .then((r) => r.json())
       .then((j) => setAi(!!j.ok))
