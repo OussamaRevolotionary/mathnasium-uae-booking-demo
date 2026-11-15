@@ -208,7 +208,7 @@ export function StaffDashboard() {
                     )}
                     style={{ animationDelay: `${i * 50}ms` }}
                   >
-                    {current && <span className="absolute -top-2 start-3 rounded-full bg-ink px-2 py-0.5 text-[10px] font-bold text-white">{L('NOW', 'الآن')}</span>}
+                    {current && <span className="accent absolute -top-2 start-3 rounded-full bg-ink px-2 py-0.5 text-[10px] font-bold text-white">{L('NOW', 'الآن')}</span>}
                     {!current && h === nextHour && !openNow && <span className="absolute -top-2 start-3 rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-bold text-slate-600">{L('NEXT', 'التالي')}</span>}
                     <div className="flex items-baseline justify-between">
                       <span className="text-sm font-semibold text-ink tabular-nums" dir="ltr">
@@ -579,7 +579,7 @@ export function StaffBookDrawer({ initial, onClose }: { initial: Student | null;
 
               <div className="no-scrollbar -mx-1 mt-4 flex gap-2 overflow-x-auto px-1">
                 {days.map((d) => (
-                  <button key={d} onClick={() => setDate(d)} className={cx('w-14 shrink-0 rounded-xl border py-1.5 text-center', d === date ? 'border-ink bg-ink text-white' : 'border-slate-200 text-ink')}>
+                  <button key={d} onClick={() => setDate(d)} className={cx('w-14 shrink-0 rounded-xl border py-1.5 text-center', d === date ? 'accent border-ink bg-ink text-white' : 'border-slate-200 text-ink')}>
                     <div className="text-[10px] opacity-70">{formatDate(d, t.lang, { weekday: 'short' })}</div>
                     <div className="font-bold">{Number(d.slice(8))}</div>
                   </button>

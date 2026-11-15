@@ -18,12 +18,13 @@ export default function App() {
     const html = document.documentElement;
     html.lang = s.ui.lang;
     html.dir = s.ui.lang === 'ar' ? 'rtl' : 'ltr';
+    html.dataset.theme = s.ui.theme;
     document.title = s.ui.lang === 'ar' ? 'ماثنيزيوم الإمارات — حجز الحصص' : 'Mathnasium UAE — Book a Session';
-  }, [s.ui.lang]);
+  }, [s.ui.lang, s.ui.theme]);
 
   return (
     <>
-      <MathField tone="light" fixed density={0.7} />
+      <MathField key={s.ui.theme} tone={s.ui.theme === 'dark' ? 'dark' : 'light'} fixed density={s.ui.theme === 'dark' ? 0.9 : 0.7} />
       {!acc ? (
         <Login />
       ) : (

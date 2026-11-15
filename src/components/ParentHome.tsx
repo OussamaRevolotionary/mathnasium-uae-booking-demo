@@ -20,6 +20,7 @@ import { CAPACITY } from '../engine/calendar.ts';
 import { bookLesson, cancelLesson, childName, currentAccount, googleCalendarLink, joinWaitlist, parentName, requestUpgrade, rescheduleLesson, startReschedule, stopReschedule, ui, useAppState, useIndex, useT, whenLabel, centerFull } from '../state/store.ts';
 import { topicLabel } from '../i18n/translations.ts';
 import { Hero, Scribble } from './MathField.tsx';
+import { HowItWorks, MathPuzzle } from './Extras.tsx';
 import { Avatar, Modal, Ring, SeatPods, StarBurst, Stars, Toggle, btn, cx } from './ui.tsx';
 
 const DURATIONS: LessonDuration[] = [30, 60, 90, 120];
@@ -85,7 +86,10 @@ export function ParentHome() {
             <h1 className="text-3xl font-bold text-white sm:text-4xl">
               {t('parent.hello', { name: '' }).trim()} <Scribble>{parentName(parent, t.lang).split(' ')[0]}</Scribble>
             </h1>
-            <p className="mt-3 text-sm text-white/60">{t('parent.pickChild')}</p>
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <p className="text-sm text-white/60">{t('parent.pickChild')}</p>
+              <HowItWorks />
+            </div>
           </div>
           <NextLesson kids={kids} />
         </div>
@@ -226,7 +230,8 @@ export function ParentHome() {
         </div>
 
         {/* Upcoming */}
-        <aside className="h-fit rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-24">
+        <div className="h-fit space-y-4 lg:sticky lg:top-24">
+        <aside className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-center gap-3">
             <Avatar s={child} size={40} />
             <div className="min-w-0">
@@ -266,6 +271,8 @@ export function ParentHome() {
             })}
           </ul>
         </aside>
+        <MathPuzzle />
+        </div>
       </div>
 
       </div>
@@ -278,7 +285,7 @@ export function ParentHome() {
 function StepTitle({ n, label, sub }: { n: number; label: string; sub?: string }) {
   return (
     <div className="flex items-center gap-2.5">
-      <span className="grid size-7 place-items-center rounded-full bg-ink text-xs font-bold text-white">{n}</span>
+      <span className="accent grid size-7 place-items-center rounded-full bg-ink text-xs font-bold text-white">{n}</span>
       <span className="font-semibold text-ink">{label}</span>
       {sub && <span className="text-sm text-slate-400">· {sub}</span>}
     </div>
@@ -396,7 +403,7 @@ function DayStrip({ child, duration, ym }: { child: Student; duration: LessonDur
             key={d}
             data-on={on || undefined}
             onClick={() => ui.setDate(d)}
-            className={cx('relative flex w-16 shrink-0 flex-col items-center rounded-2xl border py-2 transition', on ? 'border-ink bg-ink text-white' : 'border-slate-200 bg-white text-ink hover:border-slate-300')}
+            className={cx('relative flex w-16 shrink-0 flex-col items-center rounded-2xl border py-2 transition', on ? 'accent border-ink bg-ink text-white' : 'border-slate-200 bg-white text-ink hover:border-slate-300')}
           >
             <span className={cx('text-[11px] font-medium', on ? 'text-white/70' : 'text-slate-400')}>{formatDate(d, t.lang, { weekday: 'short' })}</span>
             <span className="text-lg leading-tight font-bold tabular-nums">{Number(d.slice(8))}</span>

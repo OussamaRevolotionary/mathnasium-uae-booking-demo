@@ -2,17 +2,18 @@ import { useEffect, type ReactNode } from 'react';
 import { Infinity as InfinityIcon, Star, X } from 'lucide-react';
 import type { MembershipTier, OccupancyStatus, Student } from '../types/domain.ts';
 import { CAPACITY } from '../engine/calendar.ts';
-import { useT } from '../state/store.ts';
+import { useAppState, useT } from '../state/store.ts';
 
 export const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(' ');
 
 const asset = (p: string) => `${import.meta.env.BASE_URL}${p}`;
 
 /** The logo as two layers so the red A+ can be "drawn" in like a marker stroke. */
-export function Logo({ className = 'h-9', animate }: { className?: string; animate?: boolean }) {
+export function Logo({ className = 'h-9', animate, light }: { className?: string; animate?: boolean; light?: boolean }) {
+  const dark = useAppState().ui.theme === 'dark' || light;
   return (
     <span className={cx('logo-stack select-none', animate && 'logo-animate', className)} role="img" aria-label="Mathnasium — The Math Learning Center">
-      <img src={asset('brand/logo-wordmark-layer.png')} alt="" className="logo-word" draggable={false} />
+      <img src={asset(dark ? 'brand/logo-wordmark-layer-light.png' : 'brand/logo-wordmark-layer.png')} alt="" className="logo-word" draggable={false} />
       <img src={asset('brand/logo-aplus-layer.png')} alt="" className="logo-aplus" draggable={false} />
     </span>
   );
@@ -51,7 +52,7 @@ export function Ring({ used, limit, size = 56 }: { used: number; limit: number |
   return (
     <div className="relative grid shrink-0 place-items-center" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#e2e8f0" strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" className="ring-track" strokeWidth={stroke} />
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -126,7 +127,7 @@ export function Toggle({ checked, onChange, label }: { checked: boolean; onChang
   return (
     <button type="button" role="switch" aria-checked={checked} onClick={() => onChange(!checked)} className="inline-flex items-center gap-2 text-sm text-slate-600">
       <span className={cx('relative h-5 w-9 rounded-full transition-colors', checked ? 'bg-brand' : 'bg-slate-300')}>
-        <span className={cx('absolute top-0.5 size-4 rounded-full bg-white shadow transition-all', checked ? 'start-[18px]' : 'start-0.5')} />
+        <span className={cx('knob absolute top-0.5 size-4 rounded-full bg-white shadow transition-all', checked ? 'start-[18px]' : 'start-0.5')} />
       </span>
       {label}
     </button>

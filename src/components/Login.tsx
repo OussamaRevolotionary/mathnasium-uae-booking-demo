@@ -3,6 +3,7 @@ import { GraduationCap, LockKeyhole, User, Users } from 'lucide-react';
 import { DEMO_LOGINS } from '../data/seedData.ts';
 import { login, useT } from '../state/store.ts';
 import { LangToggle } from './Header.tsx';
+import { ThemeToggle } from './Extras.tsx';
 import { MathField, ProductEquations } from './MathField.tsx';
 import { Logo, btn, cx } from './ui.tsx';
 
@@ -22,7 +23,10 @@ export function Login() {
       <div className="flex flex-col bg-white/85 px-6 py-6 backdrop-blur-sm sm:px-12">
         <div className="flex items-center justify-between">
           <Logo className="h-10 sm:h-12" animate />
-          <LangToggle />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <LangToggle />
+          </div>
         </div>
 
         <div className="mx-auto my-auto w-full max-w-sm py-10">
@@ -79,7 +83,9 @@ export function Login() {
           <div className="mb-auto pt-6">
             <ProductEquations lang={t.lang} />
           </div>
-          <img src={`${import.meta.env.BASE_URL}brand/mathnasium-mark-light.png`} alt="" className="mb-6 h-12 w-auto self-start" />
+          <div className="mb-6 self-start">
+            <Logo className="h-14" light />
+          </div>
           <div className="text-4xl leading-tight font-bold">{t('brand.tagline')}</div>
           <p className="mt-3 max-w-md text-white/70">{t('login.method')}</p>
           <div className="mt-8 h-1 w-24 rounded-full bg-brand" />

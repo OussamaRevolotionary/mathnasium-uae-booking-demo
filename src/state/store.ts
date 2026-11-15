@@ -46,8 +46,11 @@ export interface Toast {
   text: string;
 }
 
+export type Theme = 'dark' | 'light';
+
 export interface UiState {
   lang: Lang;
+  theme: Theme;
   childId: string;
   date: string;
   duration: LessonDuration;
@@ -90,6 +93,7 @@ function freshUi(lang: Lang = 'en'): UiState {
   const now = dubaiNow();
   return {
     lang,
+    theme: 'dark',
     childId: PERSONA.ZAYED,
     date: firstBookableDay(now.date, now),
     duration: 60,
@@ -472,7 +476,7 @@ export function resetDemo() {
   const s = getState();
   seedCache = null;
   state = initialState({ sync: s.sync, lang: s.ui.lang, accountId: s.accountId, pitchHidden: s.ui.pitchHidden });
-  state = { ...state, ui: { ...state.ui, childId: s.ui.childId, staffCenter: s.ui.staffCenter, staffTab: s.ui.staffTab, pitchOpen: s.ui.pitchOpen } };
+  state = { ...state, ui: { ...state.ui, theme: s.ui.theme, childId: s.ui.childId, staffCenter: s.ui.staffCenter, staffTab: s.ui.staffTab, pitchOpen: s.ui.pitchOpen } };
   persist();
   listeners.forEach((l) => l());
   toast(tr('toast.reset'), 'info');
@@ -488,6 +492,7 @@ export function pitchAs(target: 'ZAYED' | 'MARYAM' | 'RASHID' | 'DIRECTOR') {
 
 export const ui = {
   setLang: (lang: Lang) => setUi({ lang }),
+  setTheme: (theme: Theme) => setUi({ theme }),
   setChild: (childId: string) => setUi({ childId, reschedulingId: null }),
   setDate: (date: string) => setUi({ date }),
   setDuration: (duration: LessonDuration) => setUi({ duration }),

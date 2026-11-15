@@ -1,6 +1,7 @@
 import { CalendarDays, LayoutDashboard, LogOut, MapPin, Settings, Users } from 'lucide-react';
 import { CENTERS } from '../data/seedData.ts';
 import { currentAccount, logout, ui, useAppState, useT, type StaffTab, centerFull } from '../state/store.ts';
+import { ThemeToggle } from './Extras.tsx';
 import { Logo, cx } from './ui.tsx';
 
 export function LangToggle() {
@@ -59,6 +60,7 @@ export function Header() {
           )}
         </div>
         <div className="ms-auto flex items-center gap-2">
+          <ThemeToggle />
           <LangToggle />
           {acc && (
             <button onClick={logout} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-ink" title={t('nav.logout')}>
