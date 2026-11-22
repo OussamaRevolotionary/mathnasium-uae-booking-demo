@@ -6,6 +6,7 @@
  *             the response, so the event still arrives).
  * SIMULATED → nothing leaves the browser; used when no URL is set so the demo never fails.
  */
+import { LIVE } from '../lib/mode';
 import type { SyncConfig, SyncLogEntry, SyncPayload } from '../types/domain.ts';
 
 export const DEFAULT_SYNC_CONFIG: SyncConfig = { webhookUrl: '', mode: 'SIMULATED' };
@@ -24,7 +25,7 @@ export function newEventId() {
 }
 
 export function pendingEntry(payload: SyncPayload, config: SyncConfig): SyncLogEntry {
-  const live = config.mode === 'LIVE' && isValidWebhookUrl(config.webhookUrl);
+  const live = LIVE && config.mode === 'LIVE' && isValidWebhookUrl(config.webhookUrl);
   return { id: payload.eventId, payload, status: 'PENDING', mode: live ? 'LIVE' : 'SIMULATED', targetUrl: live ? config.webhookUrl : null };
 }
 
@@ -34,7 +35,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export async function dispatch(entry: SyncLogEntry, timeoutMs = 8000): Promise<SyncLogEntry> {
   const t0 = performance.now();
   const ms = () => Math.round(performance.now() - t0);
-  if (entry.mode === 'SIMULATED' || !entry.targetUrl) {
+  if (!LIVE || entry.mode === 'SIMULATED' || !entry.targetUrl) {
     await sleep(300 + Math.random() * 400);
     return { ...entry, status: 'SIMULATED', httpStatus: 200, latencyMs: ms() };
   }

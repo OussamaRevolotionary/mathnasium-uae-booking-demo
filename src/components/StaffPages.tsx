@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { LIVE } from '../lib/mode';
 import { CalendarCheck, CalendarDays, Check, ChevronDown, ChevronLeft, ChevronRight, CircleCheck, CircleDashed, CircleX, Copy, Lock, MessageCircle, Plus, Search, Send, Trash2, UserPlus, Users } from 'lucide-react';
 import type { Booking, ISODate, MembershipTier, SyncLogEntry } from '../types/domain.ts';
 import { CENTERS } from '../data/seedData.ts';
@@ -21,7 +22,7 @@ export function SyncBadge() {
   const s = useAppState();
   const t = useT();
   const failed = s.syncLog[0]?.status === 'FAILED';
-  const live = s.sync.mode === 'LIVE' && isValidWebhookUrl(s.sync.webhookUrl);
+  const live = LIVE && s.sync.mode === 'LIVE' && isValidWebhookUrl(s.sync.webhookUrl);
   return (
     <button onClick={() => ui.setStaffTab('SETTINGS')} className={cx('inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold', failed ? 'bg-brand-soft text-brand' : live ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600')}>
       <CalendarDays className="size-4" />

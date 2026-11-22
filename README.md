@@ -26,9 +26,12 @@ Constants live in `src/engine/calendar.ts` (hours) and `src/engine/bookingEngine
 
 ## What's inside
 - **Parents:** next-lesson countdown, child cards with monthly counters, 3-step booking, change/cancel, a star burst on every booking, and an **Ask us** assistant.
-- **Assistant:** answers membership and booking questions in English and Arabic from a built-in knowledge base (facts from mathnasium.com/sa-ar and its FAQ) plus the family's live data. It calls no AI service, never quotes a price, and hands anything else to the center. See `src/components/Assistant.tsx`.
+- **Assistant:** answers membership and booking questions in English and Arabic from a built-in knowledge base (facts from mathnasium.com/sa-ar and its FAQ) plus the family's live data. By default it is a sandbox: answers come only from the built-in knowledge base and nothing leaves the browser. With `?live=1` in the URL it also calls the n8n workflow (Gemini) and falls back to the built-in answers if that fails. It never quotes a price, and hands anything else to the center. See `src/components/Assistant.tsx`.
 - **Center dashboard:** who is in the center now, today hour by hour (3 pods x 4 seats), fill rate, free seats, waiting list, a week heatmap, a month chart, all five centers side by side, a "needs attention" list and a live activity feed. Staff can book for a parent from the dashboard.
 - **Brand:** the red A+ draws itself in on load; the browser tab icon is the A+.
+
+## Sandbox vs live mode
+By default the demo makes **no external calls** (assistant = built-in knowledge base; n8n booking sync = simulated). Open the site with `?live=1` (e.g. `.../mathnasium-uae-booking-demo/?live=1`) to enable the n8n/Gemini assistant and, if a webhook URL is set and Live chosen in Settings, real n8n sync.
 
 ## Live pitch
 Click **Pitch demo** (bottom corner; `Ctrl+Shift+D` hides it completely):

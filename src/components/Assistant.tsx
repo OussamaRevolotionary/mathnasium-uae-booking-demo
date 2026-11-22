@@ -6,6 +6,7 @@
  * data (lessons used, next lesson). No AI service is called, so it is instant, free and
  * can never invent a price. Anything it cannot answer is handed to the center.
  */
+import { LIVE } from '../lib/mode';
 import { useEffect, useRef, useState } from 'react';
 import { MessageCircle, Send, X } from 'lucide-react';
 import type { Lang, Student } from '../types/domain.ts';
@@ -305,12 +306,12 @@ const byId = (id: string) => INTENTS.find((i) => i.id === id)!;
 
 /**
  * Where the real AI model is reached: an n8n workflow that holds the Gemini key and answers from fixed facts.
- * (This address is not a secret — the key never leaves n8n.) Override with VITE_ASSISTANT_URL, or set it to
+ * (This address is not a secret — the key never leaves n8n.) Only used with ?live=1. Override with VITE_ASSISTANT_URL, or set it to
  * "off" to use only the built-in answers. If the call fails or is slow, the built-in answer is shown instead.
  */
 const N8N_ASSISTANT = 'https://oussama19.app.n8n.cloud/webhook/mathnasium-assistant';
 const configuredUrl: string = import.meta.env.VITE_ASSISTANT_URL ?? N8N_ASSISTANT;
-const AI_URL: string = configuredUrl === 'off' ? '' : configuredUrl;
+const AI_URL: string = !LIVE || configuredUrl === 'off' ? '' : configuredUrl; // sandbox by default: no fetch unless ?live=1
 
 /** What the model is told about this family (demo data). */
 function familyContext(c: Ctx): string {
